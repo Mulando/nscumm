@@ -35,6 +35,8 @@ namespace NScumm.Core.Audio
         private readonly object _gate = new object();
         private int _handleSeed;
         private readonly SoundTypeSettings[] soundTypeSettings;
+        private AudioFormat _audioFormat;
+
 
         public Mixer(int sampleRate)
         {
@@ -46,12 +48,22 @@ namespace NScumm.Core.Audio
                 soundTypeSettings[i] = new SoundTypeSettings(MaxMixerVolume);
             }
             OutputRate = sampleRate;
-            AudioFormat = new AudioFormat(OutputRate);
+            _audioFormat = new AudioFormat(OutputRate);
         }
 
-        public override AudioFormat AudioFormat { get; }
+        public override AudioFormat AudioFormat
+        {
+            get
+            {
+                return _audioFormat;
+            }
+        }
 
-        public int OutputRate { get; }
+        public int OutputRate
+        {
+            get;
+            set;
+        }
 
         public bool IsReady { get; private set; }
 

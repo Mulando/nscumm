@@ -27,17 +27,34 @@ namespace NScumm.Core.Video
     {
         private AudioInfo _audioInfo;
         private QueuingAudioStream _audioStream;
-        public override IAudioStream AudioStream { get { return _audioStream; } }
-        public override IMixer Mixer { get; }
+        private IMixer _mixer;
+        private SoundType _soundType;
 
-        public override SoundType SoundType { get; }
+        public override IAudioStream AudioStream { get { return _audioStream; } }
+        
+
+        public override IMixer Mixer 
+        {
+            get
+            {
+                return this._mixer;
+            }
+        }
+
+        public override SoundType SoundType
+        {
+            get
+            {
+                return _soundType;
+            }
+        }
         public override bool IsRewindable { get { return true; } }
 
         public SmackerAudioTrack(IMixer mixer, AudioInfo audioInfo, SoundType soundType)
         {
-            Mixer = mixer;
+            _mixer = mixer;
             _audioInfo = audioInfo;
-            SoundType = soundType;
+            _soundType = soundType;
             _audioStream = new QueuingAudioStream((int)_audioInfo.sampleRate, _audioInfo.isStereo);
         }
 
