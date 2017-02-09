@@ -75,7 +75,7 @@ namespace NScumm.Core.Audio
         {
             int pos = 0;
             int oend = count * 2;
-
+            short out0, out1;
             while (pos < oend)
             {
                 // read enough input samples so that opos >= 0
@@ -97,7 +97,6 @@ namespace NScumm.Core.Audio
                     }
                 } while (opos >= 0);
 
-                short out0, out1;
                 out0 = inBuf[inPtr++];
                 out1 = (stereo ? inBuf[inPtr++] : out0);
 

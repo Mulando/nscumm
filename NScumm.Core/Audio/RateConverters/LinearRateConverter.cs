@@ -73,7 +73,7 @@ namespace NScumm.Core.Audio
             var obufPos = 0;
             var inPos = 0;
             var oend = count;
-
+            int out0, out1;
             while (obufPos < oend)
             {
                 // read enough input samples so that opos < 0
@@ -103,7 +103,6 @@ namespace NScumm.Core.Audio
                 while (opos < FRAC_ONE_LOW && obufPos < oend)
                 {
                     // interpolate
-                    int out0, out1;
                     out0 = (short)(ilast0 + (((icur0 - ilast0) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW));
                     out1 = stereo ? (short)(ilast1 + (((icur1 - ilast1) * opos + FRAC_HALF_LOW) >> FRAC_BITS_LOW)) : out0;
 

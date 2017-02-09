@@ -59,11 +59,13 @@ namespace NScumm.Core.Audio
             int iPos = 0;
             var oPos = 0;
             var inc = stereo ? 2 : 1;
+            short out0;
+            short out1;
             // Mix the data into the output buffer
             for (; iPos < len; iPos += inc)
             {
-                var out0 = _buffer[iPos];
-                var out1 = stereo ? _buffer[iPos + 1] : out0;
+                out0 = _buffer[iPos];
+                out1 = stereo ? _buffer[iPos + 1] : out0;
 
                 // output left channel
                 RateHelper.ClampedAdd(ref obuf[oPos + (reverseStereo ? 1 : 0)], (out0 * volLeft) / Mixer.MaxMixerVolume);

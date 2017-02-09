@@ -129,12 +129,12 @@ namespace NScumm.Core.Audio.OPL.DosBox
 
             const uint bufferLength = 512;
             var tempBuffer = new int[bufferLength * 2];
-
+            uint readSamples;
             if (_emulator.Opl3Active != 0)
             {
                 while (length > 0)
                 {
-                    uint readSamples = (uint)Math.Min(length, bufferLength);
+                    readSamples = (uint)Math.Min(length, bufferLength);
 
                     _emulator.GenerateBlock3(readSamples, tempBuffer);
 
@@ -149,7 +149,7 @@ namespace NScumm.Core.Audio.OPL.DosBox
             {
                 while (length > 0)
                 {
-                    uint readSamples = (uint)Math.Min(length, bufferLength << 1);
+                    readSamples = (uint)Math.Min(length, bufferLength << 1);
 
                     _emulator.GenerateBlock2(readSamples, tempBuffer);
 
@@ -296,7 +296,7 @@ namespace NScumm.Core.Audio.OPL.DosBox
             if (doneTables)
                 return;
             doneTables = true;
-            #if ( DBOPL_WAVE_EQUALS_WAVE_HANDLER ) || ( DBOPL_WAVE_EQUALS_WAVE_TABLELOG )
+#if (DBOPL_WAVE_EQUALS_WAVE_HANDLER) || (DBOPL_WAVE_EQUALS_WAVE_TABLELOG)
             //Exponential volume table, same as the real adlib
             for (int i = 0; i < 256; i++)
             {
@@ -306,22 +306,24 @@ namespace NScumm.Core.Audio.OPL.DosBox
                 //Preshift to the left once so the final volume can shift to the right
                 ExpTable[i] *= 2;
             }
-            #endif
-            #if ( DBOPL_WAVE_EQUALS_WAVE_HANDLER )
+#endif
+#if (DBOPL_WAVE_EQUALS_WAVE_HANDLER)
             //Add 0.5 for the trunc rounding of the integer cast
             //Do a PI sinetable instead of the original 0.5 PI
             for (int i = 0; i < 512; i++)
             {
                 SinTable[i] = (ushort)(0.5 - Math.Log10(Math.Sin((i + 0.5) * (Math.PI / 512.0))) / Math.Log10(2.0) * 256);
             }
-            #endif
-            #if DBOPL_WAVE_EQUALS_WAVE_TABLEMUL
+#endif
+#if DBOPL_WAVE_EQUALS_WAVE_TABLEMUL
             //Multiplication based tables
+            int s;
+            double val;
             for (var i = 0; i < 384; i++)
             {
-                int s = i * 8;
+                s = i * 8;
                 //TODO maybe keep some of the precision errors of the original table?
-                double val = (0.5 + (Math.Pow(2.0, -1.0 + (255 - s) * (1.0 / 256))) * (1 << MulShift));
+                val = (0.5 + (Math.Pow(2.0, -1.0 + (255 - s) * (1.0 / 256))) * (1 << MulShift));
                 mulTable[i] = (ushort)(val);
             }
 
@@ -390,16 +392,18 @@ namespace NScumm.Core.Audio.OPL.DosBox
                 }
             }
             //Create the Tremolo table, just increase and decrease a triangle wave
+            byte byteVal
             for (byte i = 0; i < tremoloTable.Length / 2; i++)
             {
-                byte val = (byte)(i << EnvExtra);
-                tremoloTable[i] = val;
-                tremoloTable[tremoloTable.Length - 1 - i] = val;
+                byteVal= (byte)(i << EnvExtra);
+                tremoloTable[i] = byteVal;
+                tremoloTable[tremoloTable.Length - 1 - i] = byteVal;
             }
             //Create a table with offsets of the channels from the start of the chip
+            int index;
             for (var i = 0; i < 32; i++)
             {
-                var index = i & 0xf;
+                index = i & 0xf;
                 if (index >= 9)
                 {
                     chanOffsetTable[i] = null;
